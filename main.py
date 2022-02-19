@@ -1,7 +1,9 @@
 import openpyxl
-import Data
 
-
+def save_params(filename, text, key):
+    f = open(filename, key)
+    f.write(text)
+    f.close()
 
 
 def header(sheet,shift):
@@ -16,7 +18,6 @@ def header(sheet,shift):
 
 def body(sheet,shift):
     num_param = sheet.cell(row=1, column=2).value
-    print(num_param)
     rows = sheet.max_row
     text=''
     for i in range(2,rows):
@@ -45,7 +46,7 @@ def wrapped_body(wb,wrapper,HDR_sheet, Data_sheets, shift):
 def system_block(wb):
     shift = '\t'
     text ='$SYSTEM\n'
-    text = text + '\n' + header(wb['Main System Params'], shift + '\t')
+    text = text + '\n' + header(wb['Main System Params'], shift)
     text = text + wrapped_body(wb, '$PCI', 'System PCI header', ['System PCI Regs'], shift)
     text = text+'\n$SYSTEM\n'
     return text
@@ -121,34 +122,17 @@ def Strings_block(wb):
 def main():
 
     wb = openpyxl.load_workbook('Params.xlsx')
-    sheets = wb.sheetnames
 
+    filename ='Param.conf'
+    save_params(filename, system_block(wb), 'w')
+    save_params(filename, tables_block(wb), 'a')
+    save_params(filename, params_block(wb), 'a')
+    save_params(filename, LOG_block(wb), 'a')
+    save_params(filename, OSC_block(wb), 'a')
+    save_params(filename, Modbus_block(wb), 'a')
+    save_params(filename, IEC60870_block(wb), 'a')
+    save_params(filename, Strings_block(wb), 'a')
 
-
-    f = open('Param.conf','w')
-    f.write(system_block(wb))
-    f.close()
-    f = open('Param.conf','a')
-    f.write(tables_block(wb))
-    f.close()
-    f = open('Param.conf', 'a')
-    f.write(params_block(wb))
-    f.close()
-    f = open('Param.conf', 'a')
-    f.write(LOG_block(wb))
-    f.close()
-    f = open('Param.conf', 'a')
-    f.write(OSC_block(wb))
-    f.close()
-    f = open('Param.conf', 'a')
-    f.write(Modbus_block(wb))
-    f.close()
-    f = open('Param.conf', 'a')
-    f.write(IEC60870_block(wb))
-    f.close()
-    f = open('Param.conf', 'a')
-    f.write(Strings_block(wb))
-    f.close()
 
 
 if __name__ == '__main__':
