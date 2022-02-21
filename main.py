@@ -47,7 +47,7 @@ def system_block(wb):
     shift = '\t'
     text ='$SYSTEM\n'
     text = text + '\n' + header(wb['Main System Params'], shift)
-    text = text + wrapped_body(wb, '$PCI', 'System PCI header', ['System PCI Regs'], shift)
+    text = text + wrapped_body(wb, '$PCIE', 'System PCI header', ['System PCI Regs'], shift)
     text = text+'\n$SYSTEM\n'
     return text
 
@@ -110,12 +110,12 @@ def IEC60870_block(wb):
 def Strings_block(wb):
     sheet = wb['Strings']
     shift = '\t'
-    text ='\n$STRINGS\n'
+    text ='\n$STRINGS\n\n'
     rows = sheet.max_row
     for i in range(1,rows):
         param_num = sheet.cell(row=i + 1, column=2).value
         param_val = sheet.cell(row=i + 1, column=3).value
-        text = text + shift + '\t' + str(param_num) + '=' + str(param_val) + '\n'
+        text = text + shift + str(param_num) + '=' + str(param_val) + '\n'
     text = text+'\n$STRINGS\n'
     return text
 
@@ -123,7 +123,7 @@ def main():
 
     wb = openpyxl.load_workbook('Params.xlsx')
 
-    filename ='Param.conf'
+    filename ='params.conf'
     save_params(filename, system_block(wb), 'w')
     save_params(filename, tables_block(wb), 'a')
     save_params(filename, params_block(wb), 'a')
